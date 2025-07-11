@@ -37,7 +37,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
+          preferredSize: const Size.fromHeight(110),
           child: Column(
             children: [
               // Search Bar

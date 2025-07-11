@@ -120,9 +120,9 @@ class AssetProvider extends ChangeNotifier {
         id: '1',
         type: 'Laptop',
         assetId: 'LAP-001',
-        detail: 'Dell Latitude 5520 - 16GB RAM, 512GB SSD',
-        startDate: '2025-01-15',
-        endDate: '2027-01-15',
+        detail: 'Lenovo B4400 i5-4200M, RAM 10 GB, 256 SSD',
+        startDate: '2025-07-15',
+        endDate: '2025-08-15',
         notes: 'Primary work laptop assigned for development work',
       ),
       Asset(
@@ -142,15 +142,6 @@ class AssetProvider extends ChangeNotifier {
         startDate: '2024-12-01',
         endDate: '2025-12-01',
         notes: 'Company phone for business communications',
-      ),
-      Asset(
-        id: '4',
-        type: 'Access Card',
-        assetId: 'AC-789',
-        detail: 'Building Access Card - Level 3 Clearance',
-        startDate: '2025-07-01',
-        endDate: '2026-07-01',
-        notes: 'Access to main office and development lab',
       ),
     ];
 
