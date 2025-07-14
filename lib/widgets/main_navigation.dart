@@ -7,6 +7,7 @@ import '../pages/employment_page.dart';
 import '../pages/assignment_page.dart';
 import '../pages/asset_page.dart';
 import '../pages/emergency_page.dart';
+// Make sure EmergencyPage is defined and exported in ../pages/emergency_page.dart
 import '../pages/dependent_page.dart';
 
 

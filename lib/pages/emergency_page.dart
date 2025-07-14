@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/employee.dart';
+import '../providers/theme_provider.dart';
 
 class EmergencyPage extends StatelessWidget {
   final Employee employee;
@@ -8,19 +10,23 @@ class EmergencyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+      backgroundColor: themeProvider.backgroundColor,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             _buildEmergencyHeader(),
             const SizedBox(height: 24),
-            _buildEmergencyContactCard(),
+            _buildEmergencyContactCard(themeProvider),
             const SizedBox(height: 20),
           ],
         ),
       ),
+    );
+      }
     );
   }
 
@@ -77,12 +83,12 @@ class EmergencyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEmergencyContactCard() {
+  Widget _buildEmergencyContactCard(ThemeProvider themeProvider) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: themeProvider.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -121,6 +127,7 @@ class EmergencyPage extends StatelessWidget {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF2A9D01),
+                        
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -128,7 +135,7 @@ class EmergencyPage extends StatelessWidget {
                       'Primary contact person',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey[600],
+                        color: themeProvider.textColor.withOpacity(0.7),
                       ),
                     ),
                   ],
@@ -179,7 +186,7 @@ class EmergencyPage extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey.shade50,
+                color: const Color.fromARGB(255, 239, 238, 238),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade200),
               ),
@@ -188,7 +195,7 @@ class EmergencyPage extends StatelessWidget {
                   Icon(
                     Icons.info_outline,
                     size: 40,
-                    color: Colors.grey.shade400,
+                    color: themeProvider.textColor,
                   ),
                   const SizedBox(height: 12),
                   Text(
