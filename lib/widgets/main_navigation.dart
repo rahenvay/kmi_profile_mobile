@@ -6,6 +6,7 @@ import '../pages/employment_page.dart';
 import '../pages/assignment_page.dart';
 import '../pages/asset_page.dart';
 import '../pages/emergency_page.dart';
+import '../pages/dependent_page.dart';
 
 
 class MainNavigation extends StatefulWidget {
@@ -112,6 +113,7 @@ class _MainNavigationState extends State<MainNavigation> {
           const AssignmentPage(),
           const AssetPage(),
           EmergencyPage(employee: employee),
+          const DependentPage(),
         
         ];
 
