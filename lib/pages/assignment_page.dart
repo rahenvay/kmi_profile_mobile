@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/employee_data_provider.dart';
 import '../providers/assignment_provider.dart';
+import '../providers/theme_provider.dart';
 import '../models/employee.dart';
 import '../widgets/assignment_dialogs.dart';
 
@@ -29,12 +30,14 @@ class _AssignmentPageState extends State<AssignmentPage> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Assignments'),
-        backgroundColor: const Color(0xFF2A9D01),
-        foregroundColor: Colors.white,
-        automaticallyImplyLeading: false,
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Assignments'),
+            backgroundColor: themeProvider.accentColor,
+            foregroundColor: Colors.white,
+            automaticallyImplyLeading: false,
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
@@ -79,6 +82,8 @@ class _AssignmentPageState extends State<AssignmentPage> with SingleTickerProvid
         },
       ),
       floatingActionButton: _buildFloatingActionButton(),
+        );
+      },
     );
   }
 

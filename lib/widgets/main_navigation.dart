@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/employee_data_provider.dart';
+import '../providers/theme_provider.dart';
 import '../pages/enhanced_profile_page.dart';
 import '../pages/employment_page.dart';
 import '../pages/assignment_page.dart';
@@ -117,40 +118,53 @@ class _MainNavigationState extends State<MainNavigation> {
         
         ];
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'KMI Profile',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            backgroundColor: const Color(0xFF2A9D01),
-            elevation: 0,
-            actions: [
-              // API Status indicator
-              if (dataProvider.error != null)
-                IconButton(
-                  onPressed: () {
-                    _showApiStatusDialog(context, dataProvider);
-                  },
-                  icon: Icon(
-                    dataProvider.isOnline ? Icons.cloud_done : Icons.cloud_off,
-                    color: dataProvider.isOnline ? Colors.white : Colors.orange,
+        return Consumer<ThemeProvider>(
+          builder: (context, themeProvider, child) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text(
+                  'KMI Profile',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  tooltip: dataProvider.isOnline ? 'Online' : 'Offline',
                 ),
-              // Refresh button
-              IconButton(
-                onPressed: () {
-                  dataProvider.loadEmployeeById(employee.employeeId);
-                },
-                icon: const Icon(Icons.refresh, color: Colors.white),
-                tooltip: 'Refresh Data',
+                backgroundColor: themeProvider.accentColor,
+                elevation: 0,
+                actions: [
+                  // Theme toggle button
+                  IconButton(
+                    onPressed: () {
+                      themeProvider.toggleTheme();
+                    },
+                    icon: Icon(
+                      themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                      color: Colors.white,
+                    ),
+                    tooltip: themeProvider.isDarkMode ? 'Light Mode' : 'Dark Mode',
+                  ),
+                  // API Status indicator
+                  if (dataProvider.error != null)
+                    IconButton(
+                      onPressed: () {
+                        _showApiStatusDialog(context, dataProvider);
+                      },
+                      icon: Icon(
+                        dataProvider.isOnline ? Icons.cloud_done : Icons.cloud_off,
+                        color: dataProvider.isOnline ? Colors.white : Colors.orange,
+                      ),
+                      tooltip: dataProvider.isOnline ? 'Online' : 'Offline',
+                    ),
+                  // Refresh button
+                  IconButton(
+                    onPressed: () {
+                      dataProvider.loadEmployeeById(employee.employeeId);
+                    },
+                    icon: const Icon(Icons.refresh, color: Colors.white),
+                    tooltip: 'Refresh Data',
+                  ),
+                ],
               ),
-            ],
-          ),
           body: IndexedStack(
             index: _selectedIndex,
             children: pages,
@@ -252,6 +266,8 @@ class _MainNavigationState extends State<MainNavigation> {
           ],
         ),
       ),
+            );
+          },
         );
       },
     );

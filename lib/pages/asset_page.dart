@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/asset_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/asset_dialogs.dart';
 
 class AssetPage extends StatefulWidget {
@@ -30,24 +31,26 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Assets'),
-        backgroundColor: const Color(0xFF2A9D01),
-        foregroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(110),
-          child: Column(
-            children: [
-              // Search Bar
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search assets...',
-                    prefixIcon: const Icon(Icons.search),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Assets'),
+            backgroundColor: themeProvider.accentColor,
+            foregroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(110),
+              child: Column(
+                children: [
+                  // Search Bar
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search assets...',
+                        prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear),
@@ -115,11 +118,13 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF2A9D01),
+        backgroundColor: themeProvider.accentColor,
         onPressed: _showAssetDialog,
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text('Add Asset', style: TextStyle(color: Colors.white)),
       ),
+        );
+      },
     );
   }
 
