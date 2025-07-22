@@ -7,8 +7,9 @@ import '../pages/employment_page.dart';
 import '../pages/assignment_page.dart';
 import '../pages/asset_page.dart';
 import '../pages/emergency_page.dart';
-// Make sure EmergencyPage is defined and exported in ../pages/emergency_page.dart
 import '../pages/dependent_page.dart';
+import '../pages/api_test_page.dart';
+import 'employee_selector_dialog.dart';
 
 
 class MainNavigation extends StatefulWidget {
@@ -133,6 +134,14 @@ class _MainNavigationState extends State<MainNavigation> {
                 backgroundColor: themeProvider.accentColor,
                 elevation: 0,
                 actions: [
+                  // Employee selector button
+                  IconButton(
+                    onPressed: () {
+                      _showEmployeeSelector(context, dataProvider);
+                    },
+                    icon: const Icon(Icons.people, color: Colors.white),
+                    tooltip: 'Select Employee',
+                  ),
                   // Theme toggle button
                   IconButton(
                     onPressed: () {
@@ -320,6 +329,27 @@ class _MainNavigationState extends State<MainNavigation> {
               child: const Text('Retry Connection'),
             ),
         ],
+      ),
+    );
+  }
+
+  void _showEmployeeSelector(BuildContext context, EmployeeDataProvider dataProvider) {
+    showDialog(
+      context: context,
+      builder: (context) => EmployeeSelectorDialog(
+        onEmployeeSelected: (employee) {
+          // Update the current employee in the provider
+          dataProvider.setCurrentEmployee(employee);
+          
+          // Show a confirmation snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Switched to ${employee.fullName}'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        },
       ),
     );
   }

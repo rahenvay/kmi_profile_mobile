@@ -113,17 +113,17 @@ class Employee {
     return Employee(
       fullName: json['fullName'] ?? '',
       employeeId: json['employeeId'] ?? '',
-      employeeStatus: json['employeeStatus'] ?? '',
+      employeeStatus: json['isActiveDescription'] ?? (json['isActive'] == true ? 'Active' : 'Inactive'),
       hireDate: json['hireDate'] != null 
         ? DateTime.parse(json['hireDate']) 
         : DateTime.now(),
       terminationDate: json['terminationDate'] != null 
         ? DateTime.parse(json['terminationDate']) 
         : null,
-      company: json['company'] ?? '',
+      company: json['company'] ?? json['companyName'] ?? '',
       department: json['department'] ?? '',
       jobTitle: json['jobTitle'] ?? '',
-      employeeType: json['employeeType'] ?? '',
+      employeeType: json['employeeTypeDescription'] ?? json['employeeType'] ?? '',
       gender: json['gender'] ?? '',
       maritalStatus: json['maritalStatus'] ?? '',
       birthPlace: json['birthPlace'] ?? '',
@@ -136,7 +136,7 @@ class Employee {
       emailAddress: json['emailAddress'] ?? '',
       bankName: json['bankName'] ?? '',
       accountNo: json['accountNo'] ?? '',
-      userName: json['userName'] ?? '',
+      userName: json['userName'] ?? json['employeeId'] ?? '',
       supportedDocuments: json['supportedDocuments'] != null 
         ? List<String>.from(json['supportedDocuments']) 
         : [],

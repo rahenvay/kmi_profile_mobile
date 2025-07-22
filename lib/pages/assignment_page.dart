@@ -91,6 +91,7 @@ class _AssignmentPageState extends State<AssignmentPage> with SingleTickerProvid
     return Consumer<AssignmentProvider>(
       builder: (context, provider, child) {
         return FloatingActionButton(
+          heroTag: "assignment_fab", // Unique hero tag
           backgroundColor: const Color(0xFF2A9D01),
           onPressed: () => _showAddOptionsDialog(),
           child: const Icon(Icons.add, color: Colors.white),

@@ -19,9 +19,43 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => EmployeeDataProvider()),
-        ChangeNotifierProvider(create: (_) => AssignmentProvider()..initializeWithSampleData()),
-        ChangeNotifierProvider(create: (_) => AssetProvider()..initializeWithSampleData()),
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = EmployeeDataProvider();
+            // Initialize with sample data first
+            provider.initializeWithSampleData();
+            // Then check connection and try to load real data
+            provider.checkConnection().then((_) {
+              if (provider.isOnline) {
+                // Try to load a specific employee (using sample ID)
+                provider.loadEmployeeById('00000231').catchError((error) {
+                  print('🚨 Failed to load employee from API: $error');
+                  // Error is already handled in the provider, just log it
+                });
+              }
+            }).catchError((error) {
+              print('🚨 Failed to check API connection: $error');
+              // Connection check failed, will stay offline
+            });
+            return provider;
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (_) => AssignmentProvider()..initializeWithSampleData(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = AssetProvider();
+            // Initialize with sample data first, then try API
+            provider.initializeWithSampleData();
+            // Try to load from API, fallback to sample data if needed
+            provider.loadAssets().catchError((error) {
+              print('🚨 Failed to load assets from API: $error');
+              // Error is already handled in the provider, just log it
+            });
+            return provider;
+          },
+        ),
         ChangeNotifierProvider(create: (_) => DependentProvider()..initializeWithSampleData()),
       ],
       child: Consumer<ThemeProvider>(

@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import '../services/asset_api_service.dart';
+import '../services/api_service.dart';
 
 class Asset {
   final String id;
@@ -148,23 +150,82 @@ class AssetProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Asset CRUD operations
-  void addAsset(Asset asset) {
-    _assets.add(asset);
-    notifyListeners();
-  }
+  // Load assets from API
+  Future<void> loadAssets() async {
+    setLoading(true);
+    setError(null);
 
-  void updateAsset(String id, Asset updatedAsset) {
-    final index = _assets.indexWhere((asset) => asset.id == id);
-    if (index != -1) {
-      _assets[index] = updatedAsset;
+    try {
+      _assets = await AssetApiService.getAssets();
       notifyListeners();
+    } catch (e) {
+      setError('Failed to load assets: $e');
+      // Fallback to sample data
+      initializeWithSampleData();
+    } finally {
+      setLoading(false);
     }
   }
 
-  void deleteAsset(String id) {
-    _assets.removeWhere((asset) => asset.id == id);
-    notifyListeners();
+  // Asset CRUD operations
+  Future<void> addAsset(Asset asset) async {
+    setLoading(true);
+    setError(null);
+
+    try {
+      final createdAsset = await AssetApiService.createAsset(asset);
+      _assets.add(createdAsset);
+      notifyListeners();
+    } catch (e) {
+      setError('Failed to create asset: $e');
+      // Fallback to local add
+      _assets.add(asset);
+      notifyListeners();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<void> updateAsset(String id, Asset updatedAsset) async {
+    setLoading(true);
+    setError(null);
+
+    try {
+      final updated = await AssetApiService.updateAsset(updatedAsset);
+      final index = _assets.indexWhere((asset) => asset.id == id);
+      if (index != -1) {
+        _assets[index] = updated;
+        notifyListeners();
+      }
+    } catch (e) {
+      setError('Failed to update asset: $e');
+      // Fallback to local update
+      final index = _assets.indexWhere((asset) => asset.id == id);
+      if (index != -1) {
+        _assets[index] = updatedAsset;
+        notifyListeners();
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<void> deleteAsset(String id) async {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await AssetApiService.deleteAsset(id);
+      _assets.removeWhere((asset) => asset.id == id);
+      notifyListeners();
+    } catch (e) {
+      setError('Failed to delete asset: $e');
+      // Fallback to local delete
+      _assets.removeWhere((asset) => asset.id == id);
+      notifyListeners();
+    } finally {
+      setLoading(false);
+    }
   }
 
   Asset? getAssetById(String id) {

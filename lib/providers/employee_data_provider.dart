@@ -174,6 +174,12 @@ class EmployeeDataProvider extends ChangeNotifier {
     }
   }
 
+  /// Set current employee directly
+  void setCurrentEmployee(Employee employee) {
+    _currentEmployee = employee;
+    _safeNotify();
+  }
+
   /// Initialize with sample data (for offline mode or fallback)
   void initializeWithSampleData() {
     _currentEmployee = Employee.sample();

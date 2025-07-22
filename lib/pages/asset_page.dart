@@ -118,6 +118,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: "asset_fab", // Unique hero tag
         backgroundColor: themeProvider.accentColor,
         onPressed: _showAssetDialog,
         icon: const Icon(Icons.add, color: Colors.white),

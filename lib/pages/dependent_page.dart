@@ -120,6 +120,7 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: "dependent_fab", // Unique hero tag
         backgroundColor: const Color(0xFF2A9D01),
         onPressed: _showDependentDialog,
         icon: const Icon(Icons.add, color: Colors.white),
@@ -139,34 +140,39 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
   Widget _buildDependentList(List<Dependent> dependents, String title) {
     if (dependents.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.family_restroom,
-              size: 80,
-              color: Colors.grey[400],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _searchQuery.isNotEmpty ? 'No dependents found' : 'No ${title.toLowerCase()}',
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.family_restroom,
+                size: 80,
+                color: Colors.grey[400],
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _searchQuery.isNotEmpty 
-                  ? 'Try different search terms'
-                  : 'Tap the + button to add your first dependent',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
+              const SizedBox(height: 24),
+              Text(
+                _searchQuery.isNotEmpty ? 'No dependents found' : 'No ${title.toLowerCase()}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                _searchQuery.isNotEmpty 
+                    ? 'Try different search terms'
+                    : 'Tap the + button to add your first dependent',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -177,8 +183,8 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
       itemBuilder: (context, index) {
         final dependent = dependents[index];
         return Card(
-          elevation: 4,
-          margin: const EdgeInsets.only(bottom: 16),
+          elevation: 3,
+          margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -187,6 +193,7 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
               children: [
                 // Header Row
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
                       radius: 25,
@@ -208,7 +215,9 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
+                          const SizedBox(height: 2),
                           Text(
                             '${dependent.relationship} • Age ${dependent.age}',
                             style: TextStyle(
@@ -220,44 +229,55 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
                         ],
                       ),
                     ),
-                    _buildStatusChip(dependent.isActive ? 'Active' : 'Inactive'),
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        switch (value) {
-                          case 'edit':
-                            _showDependentDialog(dependent: dependent);
-                            break;
-                          case 'delete':
-                            _deleteDependent(dependent.id, dependent.name);
-                            break;
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, color: Color(0xFF2A9D01)),
-                              SizedBox(width: 8),
-                              Text('Edit'),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete, color: Colors.red),
-                              SizedBox(width: 8),
-                              Text('Delete'),
-                            ],
-                          ),
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildStatusChip(dependent.isActive ? 'Active' : 'Inactive'),
+                            PopupMenuButton<String>(
+                              onSelected: (value) {
+                                switch (value) {
+                                  case 'edit':
+                                    _showDependentDialog(dependent: dependent);
+                                    break;
+                                  case 'delete':
+                                    _deleteDependent(dependent.id, dependent.name);
+                                    break;
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                  value: 'edit',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.edit, color: Color(0xFF2A9D01)),
+                                      SizedBox(width: 8),
+                                      Text('Edit'),
+                                    ],
+                                  ),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.delete, color: Colors.red),
+                                      SizedBox(width: 8),
+                                      Text('Delete'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 
                 // Basic Info
                 Row(
@@ -276,16 +296,21 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
                 if (dependent.phoneNumber.isNotEmpty || dependent.emailAddress.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   if (dependent.phoneNumber.isNotEmpty)
-                    _buildInfoRow(Icons.phone, 'Phone', dependent.phoneNumber),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _buildInfoRow(Icons.phone, 'Phone', dependent.phoneNumber),
+                    ),
                   if (dependent.emailAddress.isNotEmpty)
                     _buildInfoRow(Icons.email, 'Email', dependent.emailAddress),
                 ],
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 // Status Badges
                 Wrap(
                   spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.start,
                   children: [
                     if (dependent.hasInsuranceCoverage)
                       _buildBadge('Insurance Covered', Icons.medical_services, Colors.blue),
@@ -297,21 +322,36 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
                 ),
 
                 if (dependent.notes.isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.grey[50],
                       borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade200),
                     ),
-                    child: Text(
-                      dependent.notes,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[700],
-                        fontStyle: FontStyle.italic,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Notes:',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          dependent.notes,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[700],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -327,33 +367,38 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
     final upcomingDates = provider.getUpcomingDates();
     
     if (upcomingDates.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.event_available,
-              size: 80,
-              color: Colors.grey,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'No Upcoming Important Dates',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.event_available,
+                size: 80,
+                color: Colors.grey[400],
               ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Add dependents to see their important dates',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
+              const SizedBox(height: 24),
+              Text(
+                'No Upcoming Important Dates',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                'Add dependents to see their important dates',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -364,18 +409,22 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
       itemBuilder: (context, index) {
         final date = upcomingDates[index];
         return Card(
-          elevation: 4,
-          margin: const EdgeInsets.only(bottom: 16),
+          elevation: 3,
+          margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: _getDateTypeColor(date.type).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: _getDateTypeColor(date.type).withOpacity(0.3),
+                    ),
                   ),
                   child: Icon(
                     _getDateTypeIcon(date.type),
@@ -393,16 +442,22 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         DateFormat('MMM dd, yyyy').format(date.date),
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      if (date.notes.isNotEmpty)
+                      if (date.notes.isNotEmpty) ...[
+                        const SizedBox(height: 6),
                         Text(
                           date.notes,
                           style: TextStyle(
@@ -410,17 +465,26 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
                             color: Colors.grey[500],
                             fontStyle: FontStyle.italic,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                      ],
                     ],
                   ),
                 ),
+                const SizedBox(width: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: date.daysUntil == 0 ? Colors.red.withOpacity(0.1) :
                            date.daysUntil <= 7 ? Colors.orange.withOpacity(0.1) :
                            Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: date.daysUntil == 0 ? Colors.red.withOpacity(0.3) :
+                             date.daysUntil <= 7 ? Colors.orange.withOpacity(0.3) :
+                             Colors.green.withOpacity(0.3),
+                    ),
                   ),
                   child: Text(
                     date.daysUntil == 0 ? 'Today' :
@@ -428,7 +492,7 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
                     '${date.daysUntil} days',
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color: date.daysUntil == 0 ? Colors.red :
                              date.daysUntil <= 7 ? Colors.orange :
                              Colors.green,
@@ -445,24 +509,28 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 14, color: Colors.grey[600]),
-        const SizedBox(width: 6),
+        Icon(icon, size: 16, color: Colors.grey[600]),
+        const SizedBox(width: 8),
         Text(
           '$label: ',
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 13,
             color: Colors.grey[600],
             fontWeight: FontWeight.w500,
           ),
         ),
-        Flexible(
+        Expanded(
           child: Text(
             value,
             style: const TextStyle(
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
+              color: Colors.black87,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
         ),
       ],
@@ -471,21 +539,21 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
 
   Widget _buildBadge(String text, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: color),
-          const SizedBox(width: 4),
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
           Text(
             text,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 11,
               color: color,
               fontWeight: FontWeight.w600,
             ),
@@ -514,16 +582,17 @@ class _DependentPageState extends State<DependentPage> with SingleTickerProvider
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: textColor.withOpacity(0.3), width: 1),
       ),
       child: Text(
         status,
         style: TextStyle(
           color: textColor,
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
       ),

@@ -170,6 +170,7 @@ class _EnhancedProfilePageState extends State<EnhancedProfilePage>
     return ScaleTransition(
       scale: _fabScaleAnimation,
       child: FloatingActionButton(
+        heroTag: "profile_theme_fab", // Unique hero tag
         onPressed: _showCustomizationMenu,
         backgroundColor: themeProvider.accentColor,
         child: const Icon(Icons.palette, color: Colors.white),
